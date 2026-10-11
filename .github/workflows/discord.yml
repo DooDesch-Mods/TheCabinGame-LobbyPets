@@ -35,7 +35,7 @@ jobs:
           DISCORD_RELEASE_WEBHOOK: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
           DISCORD_CHANNEL_ID: '1534536549642014810'
           PRODUCT_NAME: Cabin Lobby Pets
-          PRODUCT_SUMMARY: Bring everyone's selected cats and dogs into the lobby, with their own skins. Requires UE4SS on the host and players whose pets should appear.
+          PRODUCT_SUMMARY: Show everyone's cats and dogs in the lobby and beside their Cabin chairs. Cabin pets are on by default; the host can turn them off. Requires UE4SS on the host and pet owners.
           PRODUCT_SUPPORT: https://support.doodesch.de/lobbypets
           PRODUCT_THUMBNAIL: https://raw.githubusercontent.com/DooDesch-Mods/TheCabinGame-LobbyPets/main/docs/thumbnail.png
         run: python tools/announce-release.py

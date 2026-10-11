@@ -1,11 +1,12 @@
-"""Build and verify the explicit, reproducible five-file Lua mod archive."""
+"""Build and verify the explicit, reproducible Lua mod archive."""
 from pathlib import Path
 import hashlib
 import zipfile
 
 root = Path(__file__).resolve().parents[1]
-version = "0.1.0"
+version = "0.2.0"
 paths = ["Mods/CabinLobbyPets/Scripts/main.lua", "Mods/CabinLobbyPets/Scripts/pet-save.lua",
+         "Mods/CabinLobbyPets/Scripts/settings.lua",
          "Mods/CabinLobbyPets/enabled.txt", "README.md", "LICENSE.md"]
 dist = root / "dist"
 
@@ -27,7 +28,7 @@ def build():
             assert package.read(path) == contents[path], f"source mismatch: {path}"
     digest = hashlib.sha256(archive.read_bytes()).hexdigest()
     (dist / "SHA256SUMS.txt").write_text(f"{digest}  {archive.name}\n", encoding="utf-8", newline="\n")
-    print(f"confirmed: {archive.name}; files=5; sha256={digest}")
+    print(f"confirmed: {archive.name}; files={len(paths)}; sha256={digest}")
 
 if __name__ == "__main__":
     build()

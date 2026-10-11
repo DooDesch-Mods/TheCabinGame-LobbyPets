@@ -1,10 +1,16 @@
-# Cabin Lobby Pets - 0.1.0
+# Cabin Lobby Pets - 0.2.0
 
 Bring everyone's selected cats and dogs into the lobby, with their own skins.
 
 🛟 **Need help or found a bug?** Get support at [support.doodesch.de/lobbypets](https://support.doodesch.de/lobbypets).
 
 The host's pets stay as usual. Pets from other players appear alongside them and leave when their owner leaves the lobby.
+
+## Pets in the Cabin
+
+Everyone's pets also appear beside their assigned chairs in the Cabin by default.
+
+To keep pets in the lobby only, set `in_cabin = false` in `ue4ss/Mods/CabinLobbyPets/Scripts/settings.lua` on the host before starting the game. The host's setting applies to everyone.
 
 ## Requirements
 

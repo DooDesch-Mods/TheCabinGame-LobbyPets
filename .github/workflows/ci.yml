@@ -23,6 +23,7 @@ jobs:
           sudo apt-get install -y lua5.4
           luac -p Mods/CabinLobbyPets/Scripts/main.lua
           luac -p Mods/CabinLobbyPets/Scripts/pet-save.lua
+          luac -p Mods/CabinLobbyPets/Scripts/settings.lua
       - run: python tests/test_release.py
       - run: python tests/test_discord.py
       - run: python tools/verify.py --committed
