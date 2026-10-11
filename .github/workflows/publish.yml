@@ -1,0 +1,90 @@
+name: Verify release and update Nexus
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version of an existing GitHub release without the v prefix, e.g. 0.1.2
+        required: true
+        type: string
+      publish_nexus:
+        description: Upload a new version to Nexus (check existing files before retry)
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: nexus-release-${{ github.repository }}
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.event_name == 'workflow_dispatch' || github.event.release.prerelease == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve release tag
+        id: target
+        env:
+          EVENT_TAG: ${{ github.event.release.tag_name }}
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          TAG="$EVENT_TAG"
+          if [ -n "$INPUT_VERSION" ]; then
+            TAG="v$INPUT_VERSION"
+          fi
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Invalid release tag: $TAG; expected vMAJOR.MINOR.PATCH"
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v7.0.1
+        with:
+          path: automation
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ steps.target.outputs.tag }}
+          path: release-source
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.13'
+      - run: python automation/tests/test_release.py
+      - name: Verify published files and prepare Nexus update
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.target.outputs.tag }}
+          RELEASE_SOURCE: release-source
+          PUBLISH_NEXUS: ${{ github.event_name == 'release' || inputs.publish_nexus }}
+          NEXUS_FILE_GROUP_ID: ${{ vars.NEXUS_FILE_GROUP_ID }}
+          NEXUS_MOD_ID: ${{ vars.NEXUS_MOD_ID }}
+          NEXUSMODS_API_KEY: ${{ secrets.NEXUSMODS_API_KEY }}
+        run: python automation/tools/prepare-release.py
+      - name: Upload to Nexus Mods
+        id: nexus
+        if: steps.release.outputs.nexus_ready == 'true'
+        uses: Nexus-Mods/upload-action@c96019556046053aa26044b44396cd38929daf23
+        with:
+          api_key: ${{ secrets.NEXUSMODS_API_KEY }}
+          file_id: ${{ vars.NEXUS_FILE_GROUP_ID }}
+          filename: ${{ steps.release.outputs.asset }}
+          version: ${{ steps.release.outputs.version }}
+          display_name: Cabin Lobby Pets ${{ steps.release.outputs.version }}
+          description: ${{ steps.release.outputs.notes }}
+          mod_id: ${{ steps.release.outputs.mod_id }}
+          changelog: ${{ steps.release.outputs.mod_id && steps.release.outputs.notes || '' }}
+          category: main
+          allow_mod_manager_download: ${{ vars.NEXUS_VORTEX_READY == 'true' }}
+          primary_mod_manager_download: ${{ vars.NEXUS_VORTEX_READY == 'true' }}
+          show_requirements_pop_up: true
+          archive_existing_version: true
+          update_mod_version: true
+      - name: Record Nexus acknowledgement
+        if: steps.release.outputs.nexus_ready == 'true'
+        env:
+          VERSION_ID: ${{ steps.nexus.outputs.version_id }}
+        run: |
+          if [ -z "$VERSION_ID" ]; then
+            echo "::error::Nexus returned no uploaded version ID"
+            exit 1
+          fi
+          echo "Nexus acknowledged uploaded version ID: $VERSION_ID" >> "$GITHUB_STEP_SUMMARY"

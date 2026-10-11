@@ -1,0 +1,33 @@
+name: Check and build
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.13'
+      - name: Check Lua syntax
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y lua5.4
+          luac -p Mods/CabinLobbyPets/Scripts/main.lua
+          luac -p Mods/CabinLobbyPets/Scripts/pet-save.lua
+      - run: python tests/test_release.py
+      - run: python tests/test_discord.py
+      - run: python tools/verify.py --committed
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: lobbypets-package-${{ runner.os }}
+          path: dist/*
+          if-no-files-found: error
