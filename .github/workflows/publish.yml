@@ -48,6 +48,7 @@ jobs:
         with:
           python-version: '3.13'
       - run: python automation/tests/test_release.py
+      - run: python automation/tests/test_nexus_release.py
       - name: Verify published files and prepare Nexus update
         id: release
         env:
@@ -78,13 +79,18 @@ jobs:
           show_requirements_pop_up: true
           archive_existing_version: true
           update_mod_version: true
-      - name: Record Nexus acknowledgement
-        if: steps.release.outputs.nexus_ready == 'true'
+      - name: Confirm Nexus version and preserve requirements
+        if: steps.release.outputs.nexus_contract_ready == 'true'
         env:
-          VERSION_ID: ${{ steps.nexus.outputs.version_id }}
-        run: |
-          if [ -z "$VERSION_ID" ]; then
-            echo "::error::Nexus returned no uploaded version ID"
-            exit 1
-          fi
-          echo "Nexus acknowledged uploaded version ID: $VERSION_ID" >> "$GITHUB_STEP_SUMMARY"
+          NEXUS_VERSION_ID: ${{ steps.nexus.outputs.version_id }}
+          NEXUS_MOD_ID: ${{ vars.NEXUS_MOD_ID }}
+          NEXUS_FILE_GROUP_ID: ${{ vars.NEXUS_FILE_GROUP_ID }}
+          NEXUSMODS_API_KEY: ${{ secrets.NEXUSMODS_API_KEY }}
+        run: python automation/tools/nexus_release.py verify --receipt "${{ steps.release.outputs.receipt }}"
+      - name: Retain Nexus verification receipt
+        if: always() && steps.release.outputs.nexus_contract_ready == 'true'
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: nexus-release-receipt
+          path: release-download/nexus-release.json
+          if-no-files-found: error

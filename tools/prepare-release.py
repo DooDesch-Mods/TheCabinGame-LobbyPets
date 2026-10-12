@@ -7,6 +7,9 @@ import subprocess
 import sys
 import urllib.request
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import nexus_release
+
 def resolve_tag(event_tag, input_tag):
     tag = input_tag or event_tag
     if not re.fullmatch(r"v[0-9]+\.[0-9]+\.[0-9]+", tag):
@@ -53,20 +56,18 @@ def run():
     mod_id = ""
     file_id = os.environ.get("NEXUS_FILE_GROUP_ID", "")
     key = os.environ.get("NEXUSMODS_API_KEY", "")
-    configured_mod_id = os.environ.get("NEXUS_MOD_ID", "")
-    lookup = "not attempted: Nexus configuration is incomplete"
-    if file_id and key:
-        if not file_id.isdecimal():
-            raise ValueError("NEXUS_FILE_GROUP_ID must be the numeric API File ID")
-        if configured_mod_id:
-            mod_id = lookup_mod_id(file_id, key, configured_mod_id)
-            lookup = f"confirmed: file group {file_id} belongs to Nexus mod {mod_id}"
-            print(f"info: {lookup}")
-        else:
-            lookup = "not attempted: NEXUS_MOD_ID is missing; mod-page changelog omitted"
-            print(f"::warning::{lookup}")
+    lookup = "not attempted: Nexus upload was not requested or configured"
+    receipt_path = destination / "nexus-release.json"
+    contract_ready = False
+    if ready:
+        identity = nexus_release.identity_from_environment()
+        receipt = nexus_release.preflight(identity, destination / asset, version, receipt_path)
+        contract_ready = True
+        ready = receipt["upload_required"]
+        mod_id = identity["uid"]
+        lookup = f"confirmed: file group {identity['file']} belongs to Nexus mod {mod_id}; requirements pinned"
     with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
-        output.write(f"version={version}\nasset={destination / asset}\nnexus_ready={str(ready).lower()}\nmod_id={mod_id}\nnotes<<PETS_CHANGELOG\n{notes}\nPETS_CHANGELOG\n")
+        output.write(f"receipt={receipt_path}\nnexus_contract_ready={str(contract_ready).lower()}\nversion={version}\nasset={destination / asset}\nnexus_ready={str(ready).lower()}\nmod_id={mod_id}\nnotes<<PETS_CHANGELOG\n{notes}\nPETS_CHANGELOG\n")
     print(f"info: {reason}; verified GitHub release {tag}")
     with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as summary:
         summary.write(f"Verified {tag}: ZIP integrity, source bytes, checksum, installation boundaries.\n\nNexus: {reason}.\n\nTarget lookup: {lookup}.\n")
