@@ -3,6 +3,10 @@ import json
 import os
 from pathlib import Path
 import re
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import release_notes
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -30,7 +34,7 @@ def build_payload(release, name, description, support, thumbnail, nexus, reposit
     title = name + " " + release["tag_name"].removeprefix("v")
     if release["prerelease"]:
         title += " (pre-release)"
-    description = release.get("body") or ""
+    description = release_notes.section(release["tag_name"].removeprefix("v"))
     if len(description) > 1400:
         description = description[:1400] + "\n..."
     links = f"[Nexus]({nexus}) · [GitHub]({release['html_url']})"

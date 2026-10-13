@@ -11,6 +11,11 @@ discord = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(discord)
 
 class Announcement(unittest.TestCase):
+    def setUp(self):
+        self.notes = patch.object(discord.release_notes, "section", return_value="")
+        self.notes_mock = self.notes.start()
+        self.addCleanup(self.notes.stop)
+
     def test_send_without_release_tag_stops_before_network(self):
         with patch.dict(os.environ, {"RELEASE_TAG": "", "SEND_ANNOUNCEMENT": "true"}), patch.object(discord, "request_json") as request:
             with self.assertRaisesRegex(ValueError, "published release tag"):
@@ -42,11 +47,13 @@ class Announcement(unittest.TestCase):
             with self.subTest(nexus=nexus), self.assertRaisesRegex(ValueError, "Nexus link requires"):
                 discord.build_payload(release, "Test", "Summary", "https://example.test/support", "https://example.test/icon.png", nexus, "DooDesch-Mods/TheCabinGame-ModSettings")
 
-    def test_schedule_style_uses_release_notes_and_truncates_at_1400(self):
+    def test_schedule_style_uses_changelog_notes_and_truncates_at_1400(self):
         release = {"draft": False, "published_at": "2026-10-11", "prerelease": False, "tag_name": "v0.1.2", "html_url": "https://example.test/release", "body": "Release notes\n- Change"}
+        self.notes_mock.return_value = release["body"]
         payload = discord.build_payload(release, "Test", "Summary", "https://example.test/support", "https://example.test/icon.png", "https://www.nexusmods.com/thecabingame/mods/6", "DooDesch-Mods/TheCabinGame-ModSettings")
         self.assertEqual(payload["embeds"][0]["description"], release["body"])
         release["body"] = "x" * 1401
+        self.notes_mock.return_value = release["body"]
         payload = discord.build_payload(release, "Test", "Summary", "https://example.test/support", "https://example.test/icon.png", "https://www.nexusmods.com/thecabingame/mods/6", "DooDesch-Mods/TheCabinGame-ModSettings")
         self.assertEqual(payload["embeds"][0]["description"], "x" * 1400 + "\n...")
 

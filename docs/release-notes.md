@@ -1,11 +1,12 @@
-# Cabin Lobby Pets 0.3.0
+## Changes in 0.3.0
 
-🛟 **Need help or found a bug?** Get support at [support.doodesch.de/lobbypets](https://support.doodesch.de/lobbypets).
+### Changed
 
-Show lobby members' selected cats and dogs with their own skins, in the lobby and beside their assigned chairs in the Cabin. Cabin pets are enabled by default.
+- Show selected cats and dogs beside their chairs in the Cabin by default.
+- Change the host's Cabin-pets setting in Mod Settings for the next round.
 
-- Add optional [Mod Settings](https://www.nexusmods.com/thecabingame/mods/6) controls for the host's Cabin-pets setting, applied next Cabin round.
-- Keep the original None selection when reading saved pets.
-- Keep Cabin pets in the playable cabin after the opening transition.
+### Fixed
 
-Requires [UE4SS for The Cabin Game](https://www.nexusmods.com/thecabingame/mods/4), version `v3.0.1-1164-g5e627997`, on the host and each player whose pets should appear. Other players can see the pets without this mod. Target: Steam build `25553694`.
+- Keep the None pet selection and preserve Cabin pets after the opening transition.
+
+For manual installation and requirements, see README.md in the ZIP.

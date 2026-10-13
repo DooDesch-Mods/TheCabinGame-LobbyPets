@@ -8,6 +8,7 @@ import tempfile
 
 import package
 import nexus_release
+import release_notes
 
 
 def run(*args):
@@ -27,6 +28,8 @@ def require_tag_target(repository, tag, commit):
 
 def main():
     package.require_acceptance()
+    release_body = release_notes.body(package.VERSION)
+    nexus_notes = release_notes.nexus(package.VERSION)
     archive = package.ROOT / "dist" / f"{package.MOD}-{package.VERSION}.zip"
     package.verify(archive, candidate=False)
     nexus = os.environ.get("PUBLISH_NEXUS") == "true"
@@ -47,7 +50,8 @@ def main():
     releases = [release for page in pages for release in page]
     existing = next((release for release in releases if release["tag_name"] == tag), None)
     if existing is None:
-        notes = package.ROOT / "docs" / "release-notes.md"
+        notes = archive.parent / "release-notes.md"
+        notes.write_text(release_body, encoding="utf-8")
         run("gh", "release", "create", tag, str(archive), str(archive.parent / "SHA256SUMS.txt"),
             "--repo", repository, "--target", os.environ["GITHUB_SHA"],
             "--title", f"{package.MOD} {package.VERSION}", "--notes-file", str(notes))
@@ -67,7 +71,7 @@ def main():
         if checksum != f"{hashlib.sha256(downloaded.read_bytes()).hexdigest()}  {archive.name}":
             raise ValueError("uploaded release checksum differs from verified ZIP")
     print(f"info: confirmed published tag, ZIP and checksum: {release['html_url']}")
-    notes = (package.ROOT / "docs" / "nexus-changelog.txt").read_text().strip()
+    notes = nexus_notes
     if any("\n" in value for value in [package.MOD, package.VERSION, str(archive)]):
         raise ValueError("invalid multiline workflow output")
     with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:

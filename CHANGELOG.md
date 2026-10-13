@@ -2,10 +2,14 @@
 
 ## 0.3.0 - 2026-10-12
 
-- Add optional Mod Settings controls for the host's Cabin-pets setting, applied next Cabin round.
-- Keep the original None selection when reading saved pets.
-- Keep Cabin pets in the playable cabin after the opening transition.
-- Show the installed version and support link in Mod Info.
+### Changed
+
+- Show selected cats and dogs beside their chairs in the Cabin by default.
+- Change the host's Cabin-pets setting in Mod Settings for the next round.
+
+### Fixed
+
+- Keep the None pet selection and preserve Cabin pets after the opening transition.
 
 ## 0.2.0 - 2026-10-11
 
