@@ -1,20 +1,20 @@
-# Cabin Lobby Pets - 0.2.0
+# Cabin Lobby Pets - 0.3.0
 
-Bring everyone's selected cats and dogs into the lobby, with their own skins.
+Bring everyone's selected cats and dogs into the lobby and beside their assigned chairs in the Cabin, with their own skins.
 
-🛟 **Need help or found a bug?** Get support at [support.doodesch.de/lobbypets](https://support.doodesch.de/lobbypets).
+> 🛟 **Need help or found a bug?** Get support at [support.doodesch.de/lobbypets](https://support.doodesch.de/lobbypets).
 
-The host's pets stay as usual. Pets from other players appear alongside them and leave when their owner leaves the lobby.
+The host's pets stay as usual. Pets from other players appear alongside them, update when their owner changes the selection and leave when their owner leaves the lobby.
 
 ## Pets in the Cabin
 
-Everyone's pets also appear beside their assigned chairs in the Cabin by default.
+Cabin pets are enabled by default. Use optional [Mod Settings](https://www.nexusmods.com/thecabingame/mods/6) to turn **Pets in the Cabin** on or off. The host controls this setting, and changes take effect next Cabin round. Lobby pets remain enabled.
 
-To keep pets in the lobby only, set `in_cabin = false` in `ue4ss/Mods/CabinLobbyPets/Scripts/settings.lua` on the host before starting the game. The host's setting applies to everyone.
+Without Mod Settings, the mod uses its saved setting. To keep pets in the lobby only, close the game and set `in_cabin = false` in `ue4ss/Mods/CabinLobbyPets/Scripts/settings.lua` on the host.
 
 ## Requirements
 
-- [UE4SS (latest experimental)](https://github.com/UE4SS-RE/RE-UE4SS/releases/tag/experimental-latest) on the host and each player whose pets should appear. Use the basic archive, not `zDEV`.
+- [UE4SS for The Cabin Game](https://www.nexusmods.com/thecabingame/mods/4), version `v3.0.1-1164-g5e627997`, on the host and each player whose pets should appear. The [latest experimental UE4SS](https://github.com/UE4SS-RE/RE-UE4SS/releases/tag/experimental-latest) is also available; use the basic archive.
 - Cabin Lobby Pets on those same players. Other players can see the pets without this mod.
 - Select your pets in the game's pet store.
 
@@ -24,4 +24,4 @@ To keep pets in the lobby only, set `in_cabin = false` in `ue4ss/Mods/CabinLobby
 2. Extract this ZIP into the `ue4ss` folder. The result must include `ue4ss/Mods/CabinLobbyPets/Scripts/main.lua`.
 3. Start the game and join a lobby with the mod installed on its host.
 
-To remove the mod, delete `ue4ss/Mods/CabinLobbyPets`.
+To remove the mod, close the game and delete `ue4ss/Mods/CabinLobbyPets`.

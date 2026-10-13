@@ -24,6 +24,8 @@ jobs:
           luac -p Mods/CabinLobbyPets/Scripts/main.lua
           luac -p Mods/CabinLobbyPets/Scripts/pet-save.lua
           luac -p Mods/CabinLobbyPets/Scripts/settings.lua
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python tests/test_settings.py
       - run: python tests/test_release.py
       - run: python tests/test_discord.py
       - run: python tools/verify.py --committed

@@ -1,17 +1,13 @@
-# Publishing Lobby Pets
+# Publishing
 
-The first Nexus page and Main File are created manually from the prepared upload folder. Later updates use the same GitHub Actions flow as Palvolve and ChairMarker.
+Release only after the exact runtime payload has genuine evidence for all six checks in acceptance.json. accepted remains false while native or host/peer acceptance is open. Candidate builds do not require acceptance and do not authorize publication.
 
-| Repository variable | Value |
-| --- | --- |
-| NEXUS_FILE_GROUP_ID | API File ID from this mod's Main File > Advanced |
-| NEXUS_MOD_ID | Unique Mod ID from the same panel |
-| NEXUS_VORTEX_READY | true only after this mod's actual manager download and installation have passed |
+Use the manual release workflow with publish_nexus enabled for the combined GitHub/Nexus release. Do not create the GitHub release manually first. The workflow validates acceptance, creates or verifies the canonical tag and ZIP/checksum, captures the latest Main File requirements, uploads through the pinned Nexus action, then verifies the acknowledged version and file-to-file ranges before dispatching one Discord announcement.
 
-NEXUSMODS_API_KEY and DISCORD_RELEASE_WEBHOOK use the existing organization secrets. Keep their values in GitHub Secrets.
+The existing organization secrets NEXUSMODS_API_KEY and DISCORD_RELEASE_WEBHOOK stay in GitHub Secrets. Configure NEXUS_MOD_ID and NEXUS_FILE_GROUP_ID for this exact mod and its existing Main File. NEXUS_VORTEX_READY is true only after an actual manager download and deployment pass.
 
-Check and build verifies Lua syntax, release routing, reproducible packaging and installation boundaries on Linux and Windows. Publish vMAJOR.MINOR.PATCH only after that exact commit passes and both CI package hashes match the local archive. Upload the ZIP and SHA256SUMS.txt with the release.
+The release helper supports published and unpublished parents. It preserves the existing UE4SS minimum file version 45363444580354 through Latest and retains dist/nexus-release.json as a CI artifact. It verifies the configured mod, file group, canonical version and exact requirements readback. The receipt distinguishes local archive verification from an unconfirmed remote archive hash.
 
-The release verification checks uploaded files against the tag and checksum. Missing first-upload Nexus configuration is reported as a skipped upload. An explicitly requested upload with missing configuration fails. After an unclear result, inspect Nexus before retrying.
+After failure or timeout, inspect retained receipts and the actual GitHub/Nexus state before retrying. Existing Nexus versions and changed tags or archives block automatic overwrite. Do not dispatch Discord again for an already announced release.
 
-Release announcements target Discord channel 1534536549642014810 and use docs/thumbnail.png. Manual workflow checks do not send a message unless announce is selected. Saved-message acknowledgement is retained as an artifact.
+No game files, loader binaries, diagnostics, user settings or extracted original assets belong in the release ZIP.

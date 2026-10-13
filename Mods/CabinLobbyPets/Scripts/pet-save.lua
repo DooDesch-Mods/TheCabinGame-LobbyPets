@@ -24,7 +24,7 @@ local function decode(data)
     for _ = 1, count do
         local kind, skin
         kind, skin, position = string.unpack("<i4i4", data, position)
-        assert(allowed[kind] and allowed[kind][skin] and pets[kind] == nil, "invalid or duplicate selected pet")
+        assert(allowed[kind] and (skin == 0 or allowed[kind][skin]) and pets[kind] == nil, "invalid or duplicate selected pet")
         pets[kind] = skin
     end
     return pets[1] or 0, pets[2] or 0

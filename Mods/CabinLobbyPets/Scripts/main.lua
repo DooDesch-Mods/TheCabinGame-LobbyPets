@@ -2,6 +2,8 @@ local directory = debug.getinfo(1, "S").source:sub(2):match("^(.*[/\\])")
 local save = assert(loadfile(directory .. "pet-save.lua"))()
 local settings = assert(loadfile(directory .. "settings.lua"))()
 assert(type(settings) == "table" and type(settings.in_cabin) == "boolean", "settings.in_cabin must be boolean")
+package.path = directory .. "?.lua;" .. package.path
+local nextSettings, cabinScene, settingsBridge = settings, nil, nil
 local marker = -2713701
 local records, failures, removals = {}, {}, {}
 local statics, system, ai, nativeValid
@@ -61,6 +63,12 @@ local function sceneFor(pawn)
     for _, class in ipairs({"Lobby_Garage_BP_C", "RealCabin_BP_C"}) do
         for _, actor in ipairs(FindAllOf(class) or {}) do
             if valid(actor) and actor:GetWorld():GetAddress() == pawn:GetWorld():GetAddress() then
+                if class=="RealCabin_BP_C" then
+                    if cabinScene~=actor:GetAddress() then
+                        settings.in_cabin=nextSettings.in_cabin
+                        cabinScene=actor:GetAddress()
+                    end
+                else cabinScene=nil end
                 return actor, class == "RealCabin_BP_C"
             end
         end
@@ -73,10 +81,23 @@ local function spawnPoint(record, kind)
         p.Y = p.Y + record.offset
         return p
     end
+    local board
+    for _, candidate in ipairs(FindAllOf("GameBoard_BP_C") or {}) do
+        if valid(candidate) and not candidate:IsActorBeingDestroyed()
+            and candidate:HasAuthority()
+            and candidate:GetWorld():GetAddress() == record.scene:GetWorld():GetAddress() then
+            assert(candidate:GetClass():GetFullName() == "BlueprintGeneratedClass /Game/CabinGameContent/BoardGameStuff/Board/GameBoard_BP.GameBoard_BP_C", "original Cabin GameBoard class differs")
+            board = candidate
+            break
+        end
+    end
+    if not board then return nil, "Cabin game start" end
+    assert(type(board.GameStarted) == "boolean", "original Cabin GameBoard.GameStarted unavailable")
+    if not board.GameStarted then return nil, "Cabin game start" end
     local chair = record.pawn.Chair
-    if not valid(chair) or chair:GetWorld():GetAddress() ~= record.scene:GetWorld():GetAddress() then return end
+    if not valid(chair) or chair:GetWorld():GetAddress() ~= record.scene:GetWorld():GetAddress() then return nil, "assigned Cabin chair" end
     local mesh = chair.Chair
-    if not valid(mesh) then return end
+    if not valid(mesh) then return nil, "assigned Cabin chair" end
     local p = mesh:K2_GetComponentLocation()
     local forward, right = chair:GetActorForwardVector(), chair:GetActorRightVector()
     local side = kind == "cat" and -40 or 40
@@ -95,13 +116,13 @@ local function setPet(record, kind, id)
     end
     local actor = current and current.actor
     if not valid(actor) then
-        local spawn = spawnPoint(record, kind)
+        local spawn, waitingFor = spawnPoint(record, kind)
         if not spawn then
-            if not record.waiting then log("info", "waiting for assigned Cabin chair: " .. record.pawn:GetFullName()) end
-            record.waiting = true
+            if record.waiting ~= waitingFor then log("info", "waiting for " .. waitingFor .. ": " .. record.pawn:GetFullName()) end
+            record.waiting = waitingFor
             return
         end
-        if record.waiting then log("info", "assigned Cabin chair available: " .. record.pawn:GetFullName()) end
+        if record.waiting then log("info", record.waiting .. " ready: " .. record.pawn:GetFullName()) end
         record.waiting = nil
         local species = kind == "cat" and "Cat" or "Dog"
         local prefix = "/Game/Cabin_Lobby_Content/Pet_Content/Pets/" .. species .. "/"
@@ -235,10 +256,18 @@ local function update()
     end
 end
 
+local settingsOK, settingsResult = pcall(function()
+    return require("cabin_legacy_settings").start(directory,require("definition"),log,
+        function() return nextSettings end,function(candidate) nextSettings=candidate end)
+end)
+if settingsOK then settingsBridge=settingsResult
+else log("warn","Settings registration failed: " .. tostring(settingsResult) .. "; original pet behavior remains active") end
+if settingsBridge then require("cabin_host_settings").start(settingsBridge) end
 LoopAsync(1000, function()
     if pending then return end
     pending = true
     ExecuteInGameThread(function()
+        if settingsBridge then settingsBridge:poll() end
         guard("update lobby pets", update)
         pending = false
     end)
