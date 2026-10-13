@@ -37,6 +37,7 @@ jobs:
           PRODUCT_NAME: Cabin Lobby Pets
           PRODUCT_SUMMARY: Show everyone's cats and dogs in the lobby and beside their Cabin chairs. Cabin pets are on by default; the host can turn them off. Requires UE4SS on the host and pet owners.
           PRODUCT_SUPPORT: https://support.doodesch.de/lobbypets
+          NEXUS_MOD_URL: ${{ vars.NEXUS_MOD_URL }}
           PRODUCT_THUMBNAIL: https://raw.githubusercontent.com/DooDesch-Mods/TheCabinGame-LobbyPets/main/docs/thumbnail.png
         run: python tools/announce-release.py
       - name: Keep Discord acknowledgement

@@ -20,16 +20,27 @@ def request_json(url, label, headers=None, payload=None):
         reason = re.sub(r"https://[^\s'\"]+", "[URL redacted]", reason)
         raise RuntimeError(f"{label}: {reason}; delivery is unconfirmed") from error
 
-def build_payload(release, name, description, support, thumbnail):
+def build_payload(release, name, description, support, thumbnail, nexus, repository):
     if release["draft"] or not release.get("published_at"):
         raise ValueError("release is not published")
     if urllib.parse.urlparse(thumbnail).scheme != "https":
         raise ValueError("product thumbnail requires an HTTPS image URL")
+    if not re.fullmatch(r"https://www\.nexusmods\.com/thecabingame/mods/[1-9][0-9]*", nexus):
+        raise ValueError("Nexus link requires a canonical The Cabin Game product URL")
     title = name + " " + release["tag_name"].removeprefix("v")
     if release["prerelease"]:
         title += " (pre-release)"
-    description += f"\n\n[Download]({release['html_url']}) · [Support]({support})"
-    return {"allowed_mentions": {"parse": []}, "embeds": [{"title": title, "url": release["html_url"], "description": description, "color": 0x7DFAAB, "thumbnail": {"url": thumbnail}}]}
+    description = release.get("body") or ""
+    if len(description) > 1400:
+        description = description[:1400] + "\n..."
+    links = f"[Nexus]({nexus}) · [GitHub]({release['html_url']})"
+    short = repository.rsplit("/", 1)[-1]
+    return {"allowed_mentions": {"parse": []}, "embeds": [{
+        "title": title, "url": release["html_url"], "description": description,
+        "color": 8256434, "thumbnail": {"url": thumbnail},
+        "fields": [{"name": "Get it", "value": links}],
+        "footer": {"text": "The Cabin Game · " + short},
+    }]}
 
 def announce(webhook, expected_channel, payload, send, record):
     parsed = urllib.parse.urlparse(webhook)
@@ -78,7 +89,7 @@ def run():
         if release["tag_name"] != tag:
             raise ValueError("GitHub release tag differs from requested tag")
         record["release_id"] = release["id"]
-        payload = build_payload(release, os.environ["PRODUCT_NAME"], os.environ["PRODUCT_SUMMARY"], os.environ["PRODUCT_SUPPORT"], os.environ["PRODUCT_THUMBNAIL"])
+        payload = build_payload(release, os.environ["PRODUCT_NAME"], os.environ["PRODUCT_SUMMARY"], os.environ["PRODUCT_SUPPORT"], os.environ["PRODUCT_THUMBNAIL"], os.environ.get("NEXUS_MOD_URL", ""), repo)
     webhook = os.environ.get("DISCORD_RELEASE_WEBHOOK", "")
     if not webhook:
         raise ValueError("DISCORD_RELEASE_WEBHOOK is missing; release announcement cannot run")

@@ -19,18 +19,36 @@ class Announcement(unittest.TestCase):
 
     def test_draft_cannot_be_announced(self):
         with self.assertRaisesRegex(ValueError, "not published"):
-            discord.build_payload({"draft": True}, "Test", "Summary", "https://example.test", "https://example.test/icon.png")
+            discord.build_payload({"draft": True}, "Test", "Summary", "https://example.test", "https://example.test/icon.png", "https://www.nexusmods.com/thecabingame/mods/6", "DooDesch-Mods/TheCabinGame-ModSettings")
 
     def test_pre_release_and_mentions(self):
-        payload = discord.build_payload({"draft": False, "published_at": "2026-10-11", "prerelease": True, "tag_name": "v0.1.2", "html_url": "https://example.test/release"}, "Test", "Summary", "https://example.test/support", "https://example.test/icon.png")
+        payload = discord.build_payload({"draft": False, "published_at": "2026-10-11", "prerelease": True, "tag_name": "v0.1.2", "html_url": "https://example.test/release"}, "Test", "Summary", "https://example.test/support", "https://example.test/icon.png", "https://www.nexusmods.com/thecabingame/mods/6", "DooDesch-Mods/TheCabinGame-ModSettings")
         self.assertIn("pre-release", payload["embeds"][0]["title"])
         self.assertEqual(payload["allowed_mentions"], {"parse": []})
+        self.assertEqual(payload["embeds"][0]["fields"], [{"name": "Get it", "value": "[Nexus](https://www.nexusmods.com/thecabingame/mods/6) · [GitHub](https://example.test/release)"}])
+        self.assertEqual(payload["embeds"][0]["footer"]["text"], "The Cabin Game · TheCabinGame-ModSettings")
+        self.assertEqual(payload["embeds"][0]["color"], 8256434)
+        self.assertEqual(payload["embeds"][0]["description"], "")
         self.assertEqual(payload["embeds"][0]["thumbnail"]["url"], "https://example.test/icon.png")
 
     def test_missing_thumbnail_stops_before_send(self):
         release = {"draft": False, "published_at": "2026-10-11"}
         with self.assertRaisesRegex(ValueError, "thumbnail requires"):
-            discord.build_payload(release, "Test", "Summary", "https://example.test/support", "")
+            discord.build_payload(release, "Test", "Summary", "https://example.test/support", "", "https://www.nexusmods.com/thecabingame/mods/6", "DooDesch-Mods/TheCabinGame-ModSettings")
+
+    def test_missing_or_wrong_nexus_link_is_rejected(self):
+        release = {"draft": False, "published_at": "2026-10-11"}
+        for nexus in ("", "https://example.test/mods/6", "https://www.nexusmods.com/othergame/mods/6"):
+            with self.subTest(nexus=nexus), self.assertRaisesRegex(ValueError, "Nexus link requires"):
+                discord.build_payload(release, "Test", "Summary", "https://example.test/support", "https://example.test/icon.png", nexus, "DooDesch-Mods/TheCabinGame-ModSettings")
+
+    def test_schedule_style_uses_release_notes_and_truncates_at_1400(self):
+        release = {"draft": False, "published_at": "2026-10-11", "prerelease": False, "tag_name": "v0.1.2", "html_url": "https://example.test/release", "body": "Release notes\n- Change"}
+        payload = discord.build_payload(release, "Test", "Summary", "https://example.test/support", "https://example.test/icon.png", "https://www.nexusmods.com/thecabingame/mods/6", "DooDesch-Mods/TheCabinGame-ModSettings")
+        self.assertEqual(payload["embeds"][0]["description"], release["body"])
+        release["body"] = "x" * 1401
+        payload = discord.build_payload(release, "Test", "Summary", "https://example.test/support", "https://example.test/icon.png", "https://www.nexusmods.com/thecabingame/mods/6", "DooDesch-Mods/TheCabinGame-ModSettings")
+        self.assertEqual(payload["embeds"][0]["description"], "x" * 1400 + "\n...")
 
     def test_wrong_channel_stops_before_send(self):
         with patch.object(discord, "request_json", return_value={"channel_id": "wrong"}) as request:
