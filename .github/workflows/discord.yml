@@ -1,7 +1,5 @@
 name: Announce releases in Discord
 on:
-  release:
-    types: [published]
   workflow_dispatch:
     inputs:
       tag:
@@ -30,8 +28,8 @@ jobs:
       - name: Prepare or send release announcement
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ inputs.tag || github.event.release.tag_name }}
-          SEND_ANNOUNCEMENT: ${{ github.event_name == 'release' || inputs.announce }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          SEND_ANNOUNCEMENT: ${{ inputs.announce }}
           DISCORD_RELEASE_WEBHOOK: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
           DISCORD_CHANNEL_ID: '1534536549642014810'
           PRODUCT_NAME: Cabin Lobby Pets

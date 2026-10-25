@@ -67,10 +67,24 @@ jobs:
           name: nexus-release-receipt
           path: dist/nexus-release.json
           if-no-files-found: warn
-      - name: Dispatch Discord announcement
+      - name: Announce the release in Discord
         if: success()
         env:
           GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
           RELEASE_TAG: v${{ steps.target.outputs.version }}
-        run: gh workflow run discord.yml --repo "$GH_REPO" --ref "$RELEASE_TAG" -f tag="$RELEASE_TAG" -f announce=true
+          SEND_ANNOUNCEMENT: 'true'
+          DISCORD_RELEASE_WEBHOOK: ${{ secrets.DISCORD_RELEASE_WEBHOOK }}
+          DISCORD_CHANNEL_ID: '1534536549642014810'
+          PRODUCT_NAME: Cabin Lobby Pets
+          PRODUCT_SUMMARY: Show everyone's cats and dogs in the lobby and beside their Cabin chairs. Cabin pets are on by default; the host can turn them off. Requires UE4SS on the host and pet owners.
+          PRODUCT_SUPPORT: https://support.doodesch.de/lobbypets
+          NEXUS_MOD_URL: ${{ vars.NEXUS_MOD_URL }}
+          PRODUCT_THUMBNAIL: https://raw.githubusercontent.com/DooDesch-Mods/TheCabinGame-LobbyPets/main/docs/thumbnail.png
+        run: python tools/announce-release.py
+      - name: Keep Discord acknowledgement
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: discord-announcement-${{ github.run_id }}
+          path: discord-result.json
+          if-no-files-found: warn
