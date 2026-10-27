@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.1 - 2026-10-27
+
+### Fixed
+
+- Spawn Cabin pets on the walkable floor when the first turn is ready.
+- Keep cats and dogs roaming when the Cabin has no water bowl.
+
 ## 0.3.0 - 2026-10-12
 
 ### Changed

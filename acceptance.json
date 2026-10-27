@@ -1,32 +1,33 @@
 {
   "accepted": true,
-  "payload_sha256": "cbef1448aa389095d4938e26124c97829e847783348609438adc8c86ed98eb00",
-  "game_build": "25553694",
+  "payload_sha256": "33dbf5046db8846bee426dcb96e3a6f8293bdb904c0712aeed750b23596e3fd3",
+  "game_build": "26187517",
   "ue4ss": "v3.0.1-1164-g5e627997",
   "checks": {
     "single_mod": {
       "passed": true,
-      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.single_mod: exact Pets-only two-role LAN run and clean exits"
+      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.single_mod: exact Pets-only two-role LAN run and clean exits; 0.3.1 delta and unchanged-path scope: docs/roaming-validation.json"
     },
     "settings": {
       "passed": true,
-      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.settings: original host Settings true/false/true Apply/reopen and unchanged next-scene off guard"
+      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.settings: original host Settings true/false/true Apply/reopen and unchanged next-scene off guard; 0.3.1 delta and unchanged-path scope: docs/roaming-validation.json"
     },
     "gameplay": {
       "passed": true,
-      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.single_mod.native and current_evidence.full_eight_mod.native: first Room placed and two actual board-height Haunted Dogs; earlier host photo is visual context only"
+      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.single_mod.native and current_evidence.full_eight_mod.native: first Room placed and two actual board-height Haunted Dogs; earlier host photo is visual context only; 0.3.1 delta and unchanged-path scope: docs/roaming-validation.json"
     },
     "multiplayer": {
       "passed": true,
-      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.single_mod.native and current_evidence.full_eight_mod.native: host authority, peer proxies and distinct host spawn associations"
+      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.single_mod.native and current_evidence.full_eight_mod.native: host authority, peer proxies and distinct host spawn associations; 0.3.1 delta and unchanged-path scope: docs/roaming-validation.json"
     },
     "integration": {
       "passed": true,
-      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.full_eight_mod: same frozen Pets archive with all eight selected mods in host and peer original worlds"
+      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.full_eight_mod: same frozen Pets archive with all eight selected mods in host and peer original worlds; 0.3.1 delta and unchanged-path scope: docs/roaming-validation.json"
     },
     "installation": {
       "passed": true,
-      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.single_mod.installation and current_evidence.full_eight_mod.installation: frozen archive and immutable installed payload hashes"
+      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.single_mod.installation and current_evidence.full_eight_mod.installation: frozen archive and immutable installed payload hashes; 0.3.1 delta and unchanged-path scope: docs/roaming-validation.json"
     }
-  }
+  },
+  "delta_evidence": "docs/roaming-validation.json"
 }

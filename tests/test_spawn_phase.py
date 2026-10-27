@@ -39,6 +39,10 @@ class SpawnPhaseTests(unittest.TestCase):
             function chair.Chair:K2_GetComponentLocation() return {X=0,Y=90,Z=260} end
             record={pawn=pawn,pc=pc,scene=scene,inCabin=true,offset=75}
             spawned=0
+            function library:K2_ProjectPointToNavigation(_,location,out)
+                out.X,out.Y,out.Z=location.X,location.Y,location.Z-55
+                return navigation_available~=false
+            end
             function library:SpawnAIFromClass(_,_,_,position)
                 spawned=spawned+1;requested={X=position.X,Y=position.Y,Z=position.Z}
                 local actor=object(40+spawned)
@@ -84,6 +88,18 @@ class SpawnPhaseTests(unittest.TestCase):
             local lobby={pawn=pawn,pc=pc,scene=scene,inCabin=false,offset=75}
             setPet(lobby,"dog",5)
             assert(spawned==1 and requested.X==7 and requested.Y==83 and requested.Z==9)
+        ''')
+
+    def test_current_turn_admits_cabin_pets_and_navigation_must_be_ready(self):
+        self.vm.execute('''
+            board.GameStarted=false;board.CurrentPlayerTurn=pawn
+            navigation_available=false
+            setPet(record,"dog",5)
+            assert(spawned==0 and record.waiting=="Cabin navigable floor")
+            navigation_available=true
+            setPet(record,"dog",5)
+            assert(spawned==1 and record.waiting==nil)
+            assert(requested.X==-65 and requested.Y==130 and requested.Z==315)
         ''')
 
 

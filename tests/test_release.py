@@ -42,7 +42,8 @@ class PackageTests(unittest.TestCase):
         package.verify(archive)
         with zipfile.ZipFile(archive) as bundle:
             self.assertEqual(bundle.namelist(), package.paths)
-            self.assertEqual(len(bundle.namelist()), 13)
+            self.assertEqual(len(bundle.namelist()), 14)
+            self.assertIn('Mods/CabinLobbyPets/Scripts/cabin-roaming.lua', bundle.namelist())
         self.assertFalse(self.acceptance["accepted"])
 
     def test_unaccepted_release_stops_before_any_package_write(self):

@@ -6,14 +6,15 @@ import json
 import zipfile
 
 root = Path(__file__).resolve().parents[1]
-version = "0.3.0"
+version = "0.3.1"
 ROOT = root
 MOD = "CabinLobbyPets"
 VERSION = version
-CONFIG = {"game_build": "25553694", "ue4ss": "v3.0.1-1164-g5e627997"}
+CONFIG = {"game_build": "26187517", "ue4ss": "v3.0.1-1164-g5e627997"}
 REQUIRED = {"single_mod", "settings", "gameplay", "multiplayer", "integration", "installation"}
 paths = [
     'Mods/CabinLobbyPets/Scripts/main.lua',
+    'Mods/CabinLobbyPets/Scripts/cabin-roaming.lua',
     'Mods/CabinLobbyPets/Scripts/pet-save.lua',
     'Mods/CabinLobbyPets/Scripts/settings.lua',
     'Mods/CabinLobbyPets/Scripts/definition.lua',

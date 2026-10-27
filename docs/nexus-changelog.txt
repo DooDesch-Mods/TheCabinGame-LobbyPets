@@ -1,6 +1,1 @@
-[list]
-[*]Add optional Mod Settings controls for the host's Cabin-pets setting, applied next Cabin round.
-[*]Keep the original None selection when reading saved pets.
-[*]Keep Cabin pets in the playable cabin after the opening transition.
-[*]Show the installed version and support link in Mod Info.
-[/list]
+Spawn Cabin pets on the walkable floor when the first turn is ready. Keep cats and dogs roaming when the Cabin has no water bowl.

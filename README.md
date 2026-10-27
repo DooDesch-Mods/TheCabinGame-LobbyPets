@@ -1,4 +1,4 @@
-# Cabin Lobby Pets - 0.3.0
+# Cabin Lobby Pets - 0.3.1
 
 Bring everyone's selected cats and dogs into the lobby and beside their assigned chairs in the Cabin, with their own skins.
 
@@ -8,7 +8,7 @@ The host's pets stay as usual. Pets from other players appear alongside them, up
 
 ## Pets in the Cabin
 
-Cabin pets are enabled by default. Use optional [Mod Settings](https://www.nexusmods.com/thecabingame/mods/6) to turn **Pets in the Cabin** on or off. The host controls this setting, and changes take effect next Cabin round. Lobby pets remain enabled.
+Cabin pets are enabled by default. They spawn on the walkable floor and keep roaming when the Cabin has no water bowl. Use optional [Mod Settings](https://www.nexusmods.com/thecabingame/mods/6) to turn **Pets in the Cabin** on or off. The host controls this setting, and changes take effect next Cabin round. Lobby pets remain enabled.
 
 Without Mod Settings, the mod uses its saved setting. To keep pets in the lobby only, close the game and set `in_cabin = false` in `ue4ss/Mods/CabinLobbyPets/Scripts/settings.lua` on the host.
 

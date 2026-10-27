@@ -1,0 +1,68 @@
+{
+  "version": "0.3.1",
+  "game_build": "26187517",
+  "delta_scope": [
+    "current-turn readiness",
+    "navmesh-projected spawn",
+    "Cabin-only recovery from a missing water bowl"
+  ],
+  "baseline_version": "0.3.0",
+  "baseline_checks": {
+    "single_mod": {
+      "passed": true,
+      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.single_mod: exact Pets-only two-role LAN run and clean exits"
+    },
+    "settings": {
+      "passed": true,
+      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.settings: original host Settings true/false/true Apply/reopen and unchanged next-scene off guard"
+    },
+    "gameplay": {
+      "passed": true,
+      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.single_mod.native and current_evidence.full_eight_mod.native: first Room placed and two actual board-height Haunted Dogs; earlier host photo is visual context only"
+    },
+    "multiplayer": {
+      "passed": true,
+      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.single_mod.native and current_evidence.full_eight_mod.native: host authority, peer proxies and distinct host spawn associations"
+    },
+    "integration": {
+      "passed": true,
+      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.full_eight_mod: same frozen Pets archive with all eight selected mods in host and peer original worlds"
+    },
+    "installation": {
+      "passed": true,
+      "evidence": "Workspace/evidence/nexus-drafts/lobbypets-acceptance1/aggregate.json - current_evidence.single_mod.installation and current_evidence.full_eight_mod.installation: frozen archive and immutable installed payload hashes"
+    }
+  },
+  "current_build_checks": {
+    "two_graphical_clients": true,
+    "authority_spawn_and_peer_proxies": true,
+    "cats_and_dogs_moved": true,
+    "positions": [
+      {
+        "class": "BlueprintGeneratedClass /Game/Cabin_Lobby_Content/Pet_Content/Pets/Cat/Cat_Pet_Character.Cat_Pet_Character_C",
+        "actor_address": 1802062373920,
+        "distance_cm": 402.1
+      },
+      {
+        "class": "BlueprintGeneratedClass /Game/Cabin_Lobby_Content/Pet_Content/Pets/Cat/Cat_Pet_Character.Cat_Pet_Character_C",
+        "actor_address": 1802054188640,
+        "distance_cm": 317.95
+      },
+      {
+        "class": "BlueprintGeneratedClass /Game/Cabin_Lobby_Content/Pet_Content/Pets/Dog/Dog_Pet_Character.Dog_Pet_Character_C",
+        "actor_address": 1802062375600,
+        "distance_cm": 274.02
+      },
+      {
+        "class": "BlueprintGeneratedClass /Game/Cabin_Lobby_Content/Pet_Content/Pets/Dog/Dog_Pet_Character.Dog_Pet_Character_C",
+        "actor_address": 1802400057408,
+        "distance_cm": 275.72
+      }
+    ]
+  },
+  "settings_and_lobby_paths_unchanged": true,
+  "evidence_sha256": "3227a192bb6290103dd7c8ab75174aa990f44a051c3d420ded7da0f05b863ae5",
+  "metadata_only_delta": [
+    "mod-info.ini version"
+  ]
+}

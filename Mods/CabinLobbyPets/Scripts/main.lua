@@ -93,7 +93,7 @@ local function spawnPoint(record, kind)
     end
     if not board then return nil, "Cabin game start" end
     assert(type(board.GameStarted) == "boolean", "original Cabin GameBoard.GameStarted unavailable")
-    if not board.GameStarted then return nil, "Cabin game start" end
+    if not board.GameStarted and not valid(board.CurrentPlayerTurn) then return nil, "Cabin game start" end
     local chair = record.pawn.Chair
     if not valid(chair) or chair:GetWorld():GetAddress() ~= record.scene:GetWorld():GetAddress() then return nil, "assigned Cabin chair" end
     local mesh = chair.Chair
@@ -101,9 +101,15 @@ local function spawnPoint(record, kind)
     local p = mesh:K2_GetComponentLocation()
     local forward, right = chair:GetActorForwardVector(), chair:GetActorRightVector()
     local side = kind == "cat" and -40 or 40
-    return {X = p.X - forward.X * 65 + right.X * side,
+    local requested={X = p.X - forward.X * 65 + right.X * side,
             Y = p.Y - forward.Y * 65 + right.Y * side,
             Z = chair:K2_GetActorLocation().Z + 55}
+    local projected={X=0,Y=0,Z=0}
+    local navigation=asset("/Script/NavigationSystem.Default__NavigationSystemV1")
+    local found=navigation:K2_ProjectPointToNavigation(record.scene,requested,projected,nil,nil,{X=150,Y=150,Z=250})
+    assert(type(found)=="boolean","Cabin pet navigation projection returned no boolean")
+    if not found then return nil,"Cabin navigable floor" end
+    return {X=projected.X,Y=projected.Y,Z=projected.Z+55}
 end
 
 local function setPet(record, kind, id)
@@ -212,6 +218,7 @@ local function update()
         else
             setPet(record, "cat", record.catId)
             setPet(record, "dog", record.dogId)
+            require("cabin-roaming").update(record,log)
             if ticks % 15 == 0 then
                 -- Native skin multicast is repeated for players who join after spawning.
                 for _, kind in ipairs({"cat", "dog"}) do
