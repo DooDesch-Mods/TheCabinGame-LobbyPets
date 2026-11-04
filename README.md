@@ -4,6 +4,8 @@ Bring everyone's selected cats and dogs into the lobby and beside their assigned
 
 > 🛟 **Need help or found a bug?** Get support at [support.doodesch.de/lobbypets](https://support.doodesch.de/lobbypets).
 
+[![Discord](https://mods.doodesch.de/img/badge.svg)](https://mods.doodesch.de)
+
 The host's pets stay as usual. Pets from other players appear alongside them, update when their owner changes the selection and leave when their owner leaves the lobby.
 
 ## Pets in the Cabin
@@ -25,3 +27,9 @@ Without Mod Settings, the mod uses its saved setting. To keep pets in the lobby 
 3. Start the game and join a lobby with the mod installed on its host.
 
 To remove the mod, close the game and delete `ue4ss/Mods/CabinLobbyPets`.
+
+## Community
+
+[![DooDesch Mods on Discord](https://mods.doodesch.de/img/card.svg)](https://mods.doodesch.de)
+
+Join the DooDesch Mods Discord: update pings, polls on what comes next, and playtests of new mods.
